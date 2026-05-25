@@ -1,0 +1,57 @@
+#!/bin/bash
+
+# Avbryt umiddelbart dersom en kommando feiler
+set -e
+
+echo "🚀 Starter GitHub-konfigurasjon for Grok Prompt Builder..."
+
+# 1. Sjekk om Git er initialisert, hvis ikke, gjør det nå
+if [ ! -d ".git" ]; then
+    echo "📦 Initialiserer lokalt Git-arkiv..."
+    git init -b main
+fi
+
+# 2. Sjekk om .gitignore eksisterer, hvis ikke opprett den for å unngå node_modules i skyen
+if [ ! -f ".gitignore" ]; then
+    echo "📝 Oppretter en standard .gitignore..."
+    cat << 'EOF' > .gitignore
+node_modules
+/dist
+.env
+.env.local
+.DS_Store
+EOF
+fi
+
+# 3. Legg til filer og opprett en commit hvis det er endringer
+if [ -n "$(git status --porcelain)" ]; then
+    echo "💾 Legger til ucommittede filer og lager en commit..."
+    git add .
+    git commit -m "feat: klargjør hele kildekoden for GitHub-publisering"
+else
+    echo "✅ Alt er allerede committed lokalt."
+fi
+
+# 4. Sjekk om brukeren er logget inn med GitHub CLI (gh) for helautomatisert oppsett
+if command -v gh &> /dev/null && gh auth status &> /dev/null; then
+    echo "🤖 GitHub CLI oppdaget og du er logget inn. Oppretter repo automatisk..."
+    
+    # Spør om repoet skal være privat eller offentlig (default privat for sikkerhet)
+    gh repo create grok-prompt-builder --private --source=. --remote=origin --push
+    
+    echo "🎉 Suksess! Prosjektet er opprettet på GitHub og koden er dyttet opp!"
+    echo "🔗 URL: $(gh repo view --json url -q .url)"
+else
+    # 5. Fallback: Manuell instruksjon hvis GitHub CLI ikke er installert/innlogget
+    echo ""
+    echo "⚠️  GitHub CLI (gh) ble ikke funnet eller er ikke innlogget."
+    echo "👉 Følg disse 3 enkle stegene manuelt:"
+    echo "1️⃣  Gå til https://github.com/new"
+    echo "2️⃣  Gi prosjektet navnet: grok-prompt-builder (velg Privat eller Offentlig)"
+    echo "3️⃣  Kjør disse kommandoene i denne terminalen for å koble til og dytte koden:"
+    echo ""
+    echo "    git remote add origin https://github.com/DIN_BRUKER/grok-prompt-builder.git"
+    echo "    git branch -M main"
+    echo "    git push -u origin main"
+    echo ""
+fi
