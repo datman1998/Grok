@@ -23,14 +23,14 @@
             </div>
         </div>
         <div id="cats" class="space-y-8"></div>
-        <textarea id="custom" rows="3" class="w-full mt-6 bg-[#1a1a1a] border border-[#333] rounded-2xl p-4 text-sm" placeholder="Skriv egen beskrivelse her..."></textarea>
-        <button onclick="generate()" class="w-full mt-6 bg-gradient-to-r from-[#e2c27d] to-[#c9a84c] text-black font-bold py-5 rounded-3xl text-lg">Generer prompt</button>
+        <textarea id="custom" rows="3" class="w-full mt-6 bg-[#1a1a1a] border border-[#333] rounded-2xl p-4 text-sm focus:outline-none focus:border-[#e2c27d]/50 transition-colors" placeholder="Skriv egen beskrivelse her..."></textarea>
+        <button onclick="generate()" class="w-full mt-6 bg-gradient-to-r from-[#e2c27d] to-[#c9a84c] text-black font-bold py-5 rounded-3xl text-lg active:scale-[0.99] transition-transform">Generer prompt</button>
         <div id="result" class="hidden mt-10 result-box bg-[#1a1a1a] rounded-3xl p-6">
             <div class="flex justify-between mb-4">
                 <span class="font-semibold text-[#e2c27d]">Din prompt</span>
-                <button onclick="copyPrompt()" class="text-xs bg-[#333] px-5 py-2 rounded-2xl">📋 Kopier</button>
+                <button onclick="copyPrompt()" class="text-xs bg-[#333] hover:bg-[#444] px-5 py-2 rounded-2xl transition-colors">📋 Kopier</button>
             </div>
-            <div id="promptText" class="bg-[#0d0d0d] p-5 rounded-2xl text-sm whitespace-pre-wrap font-mono"></div>
+            <div id="promptText" class="bg-[#0d0d0d] p-5 rounded-2xl text-sm whitespace-pre-wrap font-mono break-all"></div>
         </div>
     </div>
 
@@ -56,7 +56,7 @@
                     chip.onclick=()=>chip.classList.toggle("selected");
                     cd.appendChild(chip);
                 });
-            });
+            }); // Sørget for at denne lukkes riktig nå!
         }
 
         function generate(){
@@ -67,10 +67,11 @@
             });
             const cust=document.getElementById("custom").value.trim();
             if(cust) p+=cust+", ";
+            
             p=p.slice(0,-2)+" --ar 16:9 --stylize 750 --v 6";
             document.getElementById("promptText").textContent=p;
             document.getElementById("result").classList.remove("hidden");
-        }
+        } // Sørget for at denne lukkes riktig nå!
 
         function copyPrompt(){
             navigator.clipboard.writeText(document.getElementById("promptText").textContent).then(()=>{
